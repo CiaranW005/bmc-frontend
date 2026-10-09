@@ -1,4 +1,4 @@
-type Command = "wake" | "reset" | "power-off";
+type Command = "wake" | "reset" | "power_off";
 
 async function sendCommand(command: Command): Promise<void> {
     const response = await fetch(`/api/${command}`, {
@@ -19,5 +19,5 @@ export async function resetPC(): Promise<void> {
 }
 
 export async function powerOffPC(): Promise<void> {
-    return sendCommand("power-off");
+    return sendCommand("power_off");
 }

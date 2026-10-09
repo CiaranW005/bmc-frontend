@@ -1,10 +1,23 @@
+type Command = "wake" | "reset" | "power-off";
 
-export async function wakePC(): Promise<void> {
-    const response = await fetch("api/wake", {
+async function sendCommand(command: Command): Promise<void> {
+    const response = await fetch(`/api/${command}`, {
         method: "POST",
-    })
+    });
 
     if (!response.ok) {
-        throw new Error('Wake failed: ${response.status}')
+        throw new Error(`Command ${command} failed: ${response.status}`);
     }
+}
+
+export async function wakePC(): Promise<void> {
+    return sendCommand("wake");
+}
+
+export async function resetPC(): Promise<void> {
+    return sendCommand("reset");
+}
+
+export async function powerOffPC(): Promise<void> {
+    return sendCommand("power-off");
 }

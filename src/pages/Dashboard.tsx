@@ -1,5 +1,6 @@
 import { logout } from '../api/auth'
-import WakeButton from '../components/WakeButton'
+import CommandButton from '../components/CommandButton'
+import { wakePC, resetPC, powerOffPC } from '../api/bmc'
 
 function Dashboard({ onLogout }: { onLogout: () => void}) {
   async function handleLogout() {
@@ -11,7 +12,27 @@ function Dashboard({ onLogout }: { onLogout: () => void}) {
     <main>
       <h1>BMC</h1>
 
-      <WakeButton />
+      <div>
+        <CommandButton
+          label='Wake PC'
+          loadingLabel='Waking...'
+          command={wakePC}
+        />
+
+        <CommandButton
+          label='Restart PC'
+          loadingLabel='Restarting...'
+          command={resetPC}
+          confirm='Are you sure you want to restart the PC?'
+        />
+
+        <CommandButton
+          label='Shut down PC'
+          loadingLabel='Shutting down...'
+          command={powerOffPC}
+          confirm='Are you sure you want to shut down the PC?'
+        />
+      </div>
 
       <button onClick={handleLogout}>
           Logout

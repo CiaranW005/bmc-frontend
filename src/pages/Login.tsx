@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { login } from "../api/auth";
 
+import GoogleLogin from "../components/GoogleLogin";
+
 type Props = {
     onLogin: () => void
 }
@@ -38,6 +40,8 @@ function Login({ onLogin }: Props) {
             </form>
 
             {error && <p>{error}</p>}
+
+            <GoogleLogin onSuccess={onLogin} />
         </main>
     )
 }

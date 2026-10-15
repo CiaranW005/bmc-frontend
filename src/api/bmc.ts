@@ -6,7 +6,8 @@ async function sendCommand(command: Command): Promise<void> {
     });
 
     if (!response.ok) {
-        throw new Error(`Command ${command} failed: ${response.status}`);
+        const body = await response.json()
+        throw new Error(body.error ?? `Command ${command} failed: ${response.status}`);
     }
 }
 

@@ -14,27 +14,41 @@ function CommandButton({
     confirm,
 }: CommandButtonProps) {
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null)
 
     async function handleClick() {
         if (confirm && !window.confirm(confirm)) {
             return;
         }
 
+        setError(null);
         setLoading(true);
 
         try {
             await command();
         } catch (error) {
-            console.error(error);
+            setError(
+                error instanceof Error
+                    ? error.message
+                    : "Command failed"
+            )
         } finally {
             setLoading(false);
         }
     }
 
     return (
-        <button onClick={handleClick} disabled={loading}>
-            {loading ? loadingLabel : label}
-        </button>
+        <>
+            <button onClick={handleClick} disabled={loading}>
+                {loading ? loadingLabel : label}
+            </button>
+
+            {error && (
+                <p className="command-error" role="alert">
+                    {error}
+                </p>
+            )}
+        </>
     );
 }
 

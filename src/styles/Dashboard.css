@@ -168,6 +168,23 @@
     background: #eab308;
 }
 
+.status-indicator.booting {
+    color: #a16207;
+}
+
+.status-indicator.booting .status-dot {
+    background: #eab308;
+}
+
+.status-indicator.failed,
+.command-error {
+    color: #b91c1c;
+}
+
+.status-indicator.failed .status-dot {
+    background: #ef4444;
+}
+
 /* Mobile */
 
 @media (max-width: 600px) {

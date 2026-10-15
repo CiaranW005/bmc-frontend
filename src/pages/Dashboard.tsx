@@ -6,10 +6,17 @@ import "../styles/Dashboard.css"
 
 import { useEffect, useState } from 'react'
 
+type WakeProgress = {
+    id: string
+    state: "sending" | "booting" | "online" | "failed"
+    error?: string
+}
+
 type SystemStatus = {
     bmc: boolean;
     pc: boolean;
     lastSeen: string;
+    wake?: WakeProgress
 };
 
 function Dashboard({ onLogout }: { onLogout: () => void }) {
@@ -42,6 +49,32 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
     
     const pcOnline = statusConnected && status?.bmc === true
         ? status.pc : null
+
+    const wake = statusConnected ? status?.wake : undefined
+
+    let pcClass = pcOnline === true
+        ? "online" 
+        : pcOnline === false
+            ? "offline" : "unknown"
+
+    let pcLabel = pcOnline === null 
+        ? "Unknown"
+        : pcOnline
+            ? "Online"
+            : "Offline"
+
+    if (pcOnline !== true) {
+        if (wake?.state === "sending") {
+            pcClass = "booting";
+            pcLabel = "Sending wake...";
+        } else if (wake?.state === "booting") {
+            pcClass = "booting";
+            pcLabel = "Booting...";
+        } else if (wake?.state === "failed") {
+            pcClass = "failed";
+            pcLabel = "Wake failed";
+        }
+    }
 
     return (
         <main className="dashboard-page">
@@ -110,16 +143,12 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
                   <div className="status-grid">
                       <div className="status-item">
                           <span className="status-label">PC</span>
-                          <span className={`status-indicator ${
-                            pcOnline === true ? "online" : "offline"
-                          }`}
-                          >
+                          <span 
+                                className={`status-indicator ${pcClass}`}
+                                title={pcOnline !== true && wake?.state === "failed" ? wake.error : undefined}
+                            >
                             <span className="status-dot" />
-                              {pcOnline === null
-                                ? "Unknown"
-                                : pcOnline
-                                    ? "Online" : "Offline"
-                                }
+                              {pcLabel}
                           </span>
                       </div>
 
@@ -136,6 +165,12 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
                             }  
                           </span>
                       </div>
+
+                      {pcOnline !== true && wake?.state === "failed" && wake.error && (
+                        <p className="command-error" role="alert">
+                            {wake.error}
+                        </p>
+                    )}
                   </div>
               </section>
 

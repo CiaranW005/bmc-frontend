@@ -27,6 +27,7 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
 
     const [status, setStatus] = useState<SystemStatus | null>(null)
     const [statusConnected, setStatusConnected] = useState(false)
+    const [commandError, setCommandError] = useState<string | null>(null)
 
     useEffect(() => {
         const events = new EventSource("/api/status/events")
@@ -76,6 +77,12 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
         }
     }
 
+    const visibleError = commandError ?? (
+        pcOnline !== true && wake?.state === "failed"
+            ? wake.error
+            : undefined
+    )
+
     return (
         <main className="dashboard-page">
             <div className="dashboard-container">
@@ -114,6 +121,7 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
                                 label="Wake PC"
                                 loadingLabel="Waking..."
                                 command={wakePC}
+                                onError={setCommandError}
                             />
                         </div>
 
@@ -123,6 +131,7 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
                                 loadingLabel="Restarting..."
                                 command={resetPC}
                                 confirm="Are you sure you want to restart the PC?"
+                                onError={setCommandError}
                             />
                         </div>
 
@@ -132,8 +141,17 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
                                 loadingLabel="Shutting down..."
                                 command={powerOffPC}
                                 confirm="Are you sure you want to shut down the PC?"
+                                onError={setCommandError}
                             />
                         </div>
+                    </div>
+
+                    <div className="command-feedback">
+                        {visibleError && (
+                            <p className="command-error" role="alert">
+                                {visibleError}
+                            </p>
+                        )}
                     </div>
                 </section>
 
@@ -165,12 +183,6 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
                             }  
                           </span>
                       </div>
-
-                      {pcOnline !== true && wake?.state === "failed" && wake.error && (
-                        <p className="command-error" role="alert">
-                            {wake.error}
-                        </p>
-                    )}
                   </div>
               </section>
 

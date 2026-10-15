@@ -91,6 +91,25 @@
     cursor: not-allowed;
 }
 
+.command-feedback {
+    min-height: 64px;
+    margin-top: 16px;
+}
+
+.command-feedback .command-error {
+    margin: 0;
+    padding: 12px 16px;
+
+    color: #b91c1c;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: 8px;
+
+    font-size: 14px;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
 /* System status */
 
 .dashboard-status {

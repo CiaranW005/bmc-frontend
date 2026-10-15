@@ -5,10 +5,33 @@ async function sendCommand(command: Command): Promise<void> {
         method: "POST",
     });
 
-    if (!response.ok) {
-        const body = await response.json()
-        throw new Error(body.error ?? `Command ${command} failed: ${response.status}`);
+    if (response.ok) return;
+
+    let message = `Command ${command} failed (HTTP ${response.status})`
+
+    if (response.status === 401) {
+        message = "Your session has expired. Please sign in again."
+    } else if (
+        response.headers.get("content-type")?.includes("application/json")
+    ) {
+        try {
+            const body: unknown = await response.json()
+
+            if (
+                typeof body === "object" &&
+                body !== null &&
+                "error" in body &&
+                typeof body.error === "string" &&
+                body.error.trim()
+            ) {
+                message = body.error
+            }
+        } catch {
+            console.log("Could not parse error response", response)
+        }
     }
+
+    throw new Error(message)
 }
 
 export async function wakePC(): Promise<void> {

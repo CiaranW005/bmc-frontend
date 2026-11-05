@@ -1,4 +1,6 @@
 
+// Authentication uses a server-managed cookie sent automatically with
+// same-origin requests. The frontend does not store a session token.
 export async function checkSession(): Promise<void> {
     const response = await fetch("api/session")
 

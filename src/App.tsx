@@ -6,6 +6,8 @@ import Dashboard from "./pages/Dashboard"
 
 
 function App() {
+  // null means the session check is still running.
+  // Wait for the result before showing the login page or dashboard.
   const [authenticated, setAuthenticated] = useState<boolean | null>(null)
 
   useEffect(() => {

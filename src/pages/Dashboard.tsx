@@ -30,6 +30,8 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
     const [commandError, setCommandError] = useState<string | null>(null)
 
     useEffect(() => {
+        // Receive status updates over a persistent server-sent event connection.
+        // Close it when the dashboard unmounts.
         const events = new EventSource("/api/status/events")
 
         events.onmessage = (event) => {
@@ -38,6 +40,8 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
             setStatusConnected(true)
         }
 
+        // Treat the displayed status as unknown while updates are interrupted.
+        // Leave the EventSource open so it can reconnect automatically.
         events.onerror = () => {
             setStatusConnected(false)
         }
@@ -45,6 +49,8 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
         return () => events.close()
     }, [])
 
+    // Without a working status stream, the last received values may be stale.
+    // PC status is also unknown when the BMC cannot report it.
     const bmcOnline = statusConnected && status !== null
         ? status.bmc : null
     
@@ -64,6 +70,8 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
             ? "Online"
             : "Offline"
 
+    // Show wake progress while the PC is not confirmed online.
+    // Once telemetry reports it online, that takes priority over wake progress.
     if (pcOnline !== true) {
         if (wake?.state === "sending") {
             pcClass = "booting";
@@ -77,6 +85,8 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
         }
     }
 
+    // Prefer the latest command error; otherwise show a reported wake failure
+    // while the PC is not confirmed online.
     const visibleError = commandError ?? (
         pcOnline !== true && wake?.state === "failed"
             ? wake.error

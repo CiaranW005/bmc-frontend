@@ -17,11 +17,15 @@ export default function GoogleLogin({ onSuccess }: GoogleLoginProps) {
             if (!window.google || !buttonRef.current) return;
 
             window.google.accounts.id.initialize({
+                // Vite embeds this client ID during the build.
+                // It must match the Google client ID configured on the Oracle server.
                 client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
                 callback: async (response: GoogleCredentialResponse) => {
                     setError("")
 
                     try {
+                        // Send Google's credential to the server for verification and authorization.
+                        // Only enter the dashboard after the server creates a BMC session.
                         const result = await fetch("/api/auth/google", {
                             method: "POST",
                             headers: {
@@ -57,6 +61,8 @@ export default function GoogleLogin({ onSuccess }: GoogleLoginProps) {
             });
         };
 
+        // The Google script loads separately in index.html.
+        // Initialize now if it is ready; otherwise wait for its load event.
         if (window.google) {
             intialise();
             return;

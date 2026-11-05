@@ -22,6 +22,8 @@ function CommandButton({
             return;
         }
 
+        // Clear the previous error and disable this button while its request runs.
+        // Other command buttons keep their own loading state.
         onError(null);
         setLoading(true);
 

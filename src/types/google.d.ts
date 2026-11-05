@@ -3,6 +3,8 @@ interface GoogleCredentialResponse {
     select_by?: string;
 }
 
+// Describe the parts of the Google Identity API used by this app.
+// The external script supplies the actual implementation at runtime.
 interface GoogleIdentity {
     accounts: {
         id: {

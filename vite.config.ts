@@ -6,6 +6,8 @@ export default defineConfig({
   plugins: [react()],
 
   server: {
+    // Forward /api requests to the local Oracle server during development.
+    // Production routing is configured separately on the server.
     proxy: {
       "/api": {
         target: "http://127.0.0.1:8080",

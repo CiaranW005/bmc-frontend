@@ -5,6 +5,8 @@ async function sendCommand(command: Command): Promise<void> {
         method: "POST",
     });
 
+    // Successful requests need no further processing here.
+    // The dashboard receives PC status and wake progress through the status stream.
     if (response.ok) return;
 
     let message = `Command ${command} failed (HTTP ${response.status})`
@@ -15,6 +17,8 @@ async function sendCommand(command: Command): Promise<void> {
         response.headers.get("content-type")?.includes("application/json")
     ) {
         try {
+            // Check the response shape before using its error message.
+            // Keep the fallback message if the body is missing, invalid, or unexpected.
             const body: unknown = await response.json()
 
             if (
